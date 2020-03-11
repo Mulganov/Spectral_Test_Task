@@ -14,6 +14,7 @@ import android.media.tv.TvContract;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
+
 
         if (!(view instanceof Button)) return;
 
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startTimer(){
-
+final Context context = this;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -127,6 +129,14 @@ public class MainActivity extends AppCompatActivity {
                                 b.setText("START");
                             }
                         });
+
+                        MyWorker.time = time;
+                        MyWorker.context = context;
+                        MyWorker.t = t;
+                        MyWorker.vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE); // Vibrate for 500 milliseconds v.vibrate(500);
+
+                        OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(MyWorker.class).build();
+                        WorkManager.getInstance().enqueue(myWorkRequest);
                         break;
                     }
 
@@ -168,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         MyWorker.time = time;
         MyWorker.context = this;
         MyWorker.t = t;
+        MyWorker.vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE); // Vibrate for 500 milliseconds v.vibrate(500);
         OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(MyWorker.class).build();
         WorkManager.getInstance().enqueue(myWorkRequest);
     }
