@@ -25,6 +25,7 @@ public class MyWorker extends Worker {
     public static long time;
     public static Context context;
     public static long t;
+    public static Vibrator vibrator;
 
     @NonNull
     @Override
@@ -69,21 +70,13 @@ public class MyWorker extends Worker {
         createNotificationChannel();
         System.out.println("---------------------------------");
 
-        long[] vibrate = new long[] { 1000, 1000, 1000,};
-
-        Vibrator v = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE); // Vibrate for 500 milliseconds v.vibrate(500);
-
-        v.vibrate(VibrationEffect.EFFECT_DOUBLE_CLICK);
+        vibrator.vibrate(1000);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle("Test Task")
                 .setContentText(text)
-                .setVibrate(vibrate)
-                .setLights(Color.RED, 1000, 1000)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX);
-        builder.setDefaults(Notification.DEFAULT_VIBRATE);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         // notificationId is a unique int for each notification that you must define
