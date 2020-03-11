@@ -1,14 +1,19 @@
 package com.mulganov.spectral_test_task;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 import androidx.work.Worker;
 
 import java.util.Date;
@@ -34,7 +39,12 @@ public class MyWorker extends Worker {
                     long d = date1.getTime();
                     if (d >= t){
                         System.out.println("timer");
-                        break;
+                        createNotificationChannel();
+                        createNotification(0, "Время вышло");
+
+                        Log.d(TAG, "doWork: end");
+
+                        return;
                     }
 
                     try {
@@ -46,10 +56,9 @@ public class MyWorker extends Worker {
             }
         }).start();
 
-        createNotificationChannel();
-        createNotification(0, "Время вышло");
 
-        Log.d(TAG, "doWork: end");
+
+
 
         return WorkerResult.SUCCESS;
     }
@@ -59,15 +68,27 @@ public class MyWorker extends Worker {
     private void createNotification(int n, String text){
         createNotificationChannel();
         System.out.println("---------------------------------");
+
+        long[] vibrate = new long[] { 1000, 1000, 1000,};
+
+        Vibrator v = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE); // Vibrate for 500 milliseconds v.vibrate(500);
+
+        v.vibrate(VibrationEffect.EFFECT_DOUBLE_CLICK);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle("Test Task")
                 .setContentText(text)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
+                .setVibrate(vibrate)
+                .setLights(Color.RED, 1000, 1000)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setDefaults(Notification.DEFAULT_VIBRATE);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         // notificationId is a unique int for each notification that you must define
+
+
         notificationManager.notify(n, builder.build());
         System.out.println("---------------------------------");
     }
