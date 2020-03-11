@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private int time;
     private int timeMax;
     private Button b;
+    private TextView text;
 
 
     @Override
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         bar = findViewById(R.id.progressBar);
         b = findViewById(R.id.start);
+        text = findViewById(R.id.text);
 
         hide();
 
@@ -143,18 +145,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setTimer(final int timer){
-        bar.post(new Runnable() {
+
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 bar.setProgress(timer);
                 time = timer;
+                text.setText(timer + "");
             }
         });
+
     }
 
     @Override
     public void onPause(){
         super.onPause();
+
+        System.out.println(runBar);
+
+        if (!runBar) return;
 
         MyWorker.time = time;
         MyWorker.context = this;
